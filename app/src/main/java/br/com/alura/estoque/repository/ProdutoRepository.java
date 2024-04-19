@@ -6,11 +6,9 @@ import br.com.alura.estoque.asynctask.BaseAsyncTask;
 import br.com.alura.estoque.database.dao.ProdutoDAO;
 import br.com.alura.estoque.model.Produto;
 import br.com.alura.estoque.retrofit.EstoqueRetrofit;
+import br.com.alura.estoque.retrofit.callback.BaseCallBack;
 import br.com.alura.estoque.retrofit.service.ProdutoService;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.internal.EverythingIsNonNull;
 
 public class ProdutoRepository {
     private final ProdutoDAO dao;
@@ -36,26 +34,17 @@ public class ProdutoRepository {
     private void buscaProdutosNaApi(DadosCarregadosCallback<List<Produto>> callback) {
         Call<List<Produto>> call = service.buscaTodos();
 
-        call.enqueue(new Callback<List<Produto>>() {
+        call.enqueue(new BaseCallBack<>(new BaseCallBack.RespostaCallback<List<Produto>>() {
             @Override
-            @EverythingIsNonNull
-            public void onResponse(Call<List<Produto>> call, Response<List<Produto>> response) {
-                if (response.isSuccessful()) {
-                    List<Produto> produtosNovos = response.body();
-                    if (produtosNovos != null) {
-                        atualizaInterno(produtosNovos, callback);
-                    }
-                } else {
-                    callback.quandoFalha("Resposta não sucedida");
-                }
+            public void quandoSucesso(List<Produto> produtosNovos) {
+                atualizaInterno(produtosNovos, callback);
             }
 
             @Override
-            @EverythingIsNonNull
-            public void onFailure(Call<List<Produto>> call, Throwable t) {
-                callback.quandoFalha("Falha de comunicaão: " + t.getMessage());
+            public void quandoFalha(String erro) {
+                callback.quandoFalha(erro);
             }
-        });
+        }));
     }
 
     private void atualizaInterno(List<Produto> produtosNovos, DadosCarregadosCallback<List<Produto>> callback) {
@@ -71,26 +60,17 @@ public class ProdutoRepository {
 
     private void salvaNaApi(Produto produto, DadosCarregadosCallback<Produto> callback) {
         Call<Produto> call = service.salva(produto);
-        call.enqueue(new Callback<Produto>() {
+        call.enqueue(new BaseCallBack<>(new BaseCallBack.RespostaCallback<Produto>() {
             @Override
-            @EverythingIsNonNull
-            public void onResponse(Call<Produto> call, Response<Produto> response) {
-                if (response.isSuccessful()) {
-                    Produto produtoSalvo = response.body();
-                    if (produtoSalvo != null) {
-                        salvaInterno(produtoSalvo, callback);
-                    }
-                } else {
-                    callback.quandoFalha("Resposta não sucedida");
-                }
+            public void quandoSucesso(Produto produtoSalvo) {
+                salvaInterno(produtoSalvo, callback);
             }
 
             @Override
-            @EverythingIsNonNull
-            public void onFailure(Call<Produto> call, Throwable t) {
-                callback.quandoFalha("Falha de comunicaão: " + t.getMessage());
+            public void quandoFalha(String erro) {
+                callback.quandoFalha(erro);
             }
-        });
+        }));
     }
 
     private void salvaInterno(Produto produto, DadosCarregadosCallback<Produto> callback) {
