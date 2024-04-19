@@ -8,6 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EstoqueRetrofit {
 
+    private static final String URL_BASE = "http://192.168.15.41:8080/";
     private final ProdutoService produtoService;
 
     public EstoqueRetrofit() {
@@ -18,7 +19,7 @@ public class EstoqueRetrofit {
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.15.41:8080/")
+                .baseUrl(URL_BASE)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
