@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EstoqueRetrofit {
 
-    private static final String URL_BASE = "http://192.168.15.41:8080/";
+    private static final String URL_BASE = "http://ipv4:8080/";
     private final ProdutoService produtoService;
 
     public EstoqueRetrofit() {
